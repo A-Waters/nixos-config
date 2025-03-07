@@ -30,6 +30,30 @@
     ];
   };
 
+  # services.frcon = {
+  #   enabled = true;
+  # }
+  systemd.timers."config_back" = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "weekly";
+      Persistent = true; 
+    };
+  };
+
+
+  systemd.services."config_back" = {
+    script = ''
+      cd ~/Documents/dots/
+      ./upload_dot_files.sh
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "alex";
+    };
+ };
+
+
   networking.hostName = "Divinci"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
