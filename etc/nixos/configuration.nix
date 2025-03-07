@@ -23,16 +23,19 @@
   boot.loader.efi.canTouchEfiVariables = true;
    
   # garabge collection
-  services.cron = {
-    enable = true;
-    systemCronJobs = [
-      "0 0 0 0 0      root    nix-env --delete-generations 7d"
-    ];
-  };
+  # services.cron = {
+  #   enable = true;
+  #  systemCronJobs = [
+  #    "0 0 0 0 0      root    nix-env --delete-generations 7d"
+  #  ];
+  # };
 
   # services.frcon = {
   #   enabled = true;
   # }
+  
+
+
   systemd.timers."config_back" = {
     wantedBy = [ "timers.target" ];
     timerConfig = {
@@ -40,16 +43,16 @@
       Persistent = true; 
     };
   };
-
-
   systemd.services."config_back" = {
     script = ''
-      cd ~/Documents/dots/
-      ./upload_dot_files.sh
+      cd /home/alex/Documents/dots/; 
+      ./upload_dot_files.sh;
+      sudo nix-env --delete-generations 7d;
+      nix-collect-garbage;
     '';
     serviceConfig = {
       Type = "oneshot";
-      User = "alex";
+      User = "root";
     };
  };
 
@@ -147,6 +150,8 @@
     htop
     meslo-lgs-nf
     zsh-powerlevel10k
+    cifs-utils
+    samba
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -264,4 +269,17 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.ohMyZsh.enable = true;
   programs.zsh.promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+
+  # fileSystems."/mnt/share" = {
+  #  device = "//192.168.0.2/public";
+  #  fsType = "cifs";
+    # options = ["credentials=/etc/nixos/.samba-secrets"];
+    # options = let
+      # this line prevents hanging on network split
+      # automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+
+  #  in ["${automount_opts},credentials=/etc/nixos/.samba-secrets"];
+  # };
+
+
 }
