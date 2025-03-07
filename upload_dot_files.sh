@@ -10,7 +10,7 @@ copy_config_folder() {
     local source_folder="$HOME/.config/$folder"
     
     if [ -d "$source_folder" ]; then
-        cp -r "$source_folder" .
+        cp -r "$source_folder" ./.config
         echo "Successfully copied $folder to the current directory."
     else
         echo "Folder $folder does not exist in ~/.config."

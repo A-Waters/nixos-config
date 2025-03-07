@@ -13,6 +13,7 @@
       ./modules/fonts.nix
       ./modules/hyprland.nix
       ./modules/aliases.nix
+      ./modules/sound.nix
       # ./modules/wine.nix
       <home-manager/nixos>
     ];
@@ -76,15 +77,18 @@
     ];
   };
   # home manager user gernal stuff
-
   home-manager.users.alex = { pkgs, ... }: {
-  	# home.packages = [ pkgs.atool pkgs.httpie ];
+  	home.packages = [ pkgs.atool pkgs.httpie ];
   	programs.bash.enable = true;
 
   	# The state version is required and should stay at the version you
   	# originally installed.
   	home.stateVersion = "24.11";
   };
+
+
+
+  programs.bash.shellInit =''cat $/etc/nixos/kitty.meow'';
 
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "alex";
@@ -94,6 +98,7 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -110,6 +115,14 @@
     hwinfo
     git
     openssl
+    tor-browser-bundle-bin
+    libgcc
+    # gnumake
+    premake
+    btop
+    htop
+    meslo-lgs-nf
+    zsh-powerlevel10k
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -202,5 +215,29 @@
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
-   
+  
+  location.latitude = 30.264980;
+  location.longitude = -97.746597;
+
+  services.redshift = {
+    enable = true;
+    brightness = {
+      # Note the string values below.
+      day = "1";
+      night = "1";
+    };
+    temperature = {
+      day = 5500;
+      night = 3700;
+    };
+  };
+
+  services.flatpak.enable = true;
+
+  environment.shells = with pkgs; [ zsh ];
+  programs.zsh.enable = true;
+  programs.zsh.shellInit = "cat /etc/nixos/kitty.meow; \n";
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh.ohMyZsh.enable = true;
+  programs.zsh.promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
 }
